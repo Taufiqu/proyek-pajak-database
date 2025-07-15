@@ -1,4 +1,3 @@
-# backend/config.py
 import os
 from dotenv import load_dotenv
 
@@ -6,13 +5,14 @@ load_dotenv()
 
 class Config:
     """Konfigurasi utama aplikasi Flask."""
-    USER = os.getenv("user")
-    PASSWORD = os.getenv("password")
-    HOST = os.getenv("host")
-    PORT = os.getenv("port")
-    DBNAME = os.getenv("dbname")
+
+    USER = os.getenv("USER")
+    PASSWORD = os.getenv("PASSWORD")
+    HOST = os.getenv("HOST")
+    PORT = os.getenv("PORT")
+    DBNAME = os.getenv("DBNAME")
     POPPLER_PATH = os.getenv("POPPLER_PATH")
-    UPLOAD_FOLDER = "uploads"
+    UPLOAD_FOLDER = os.getenv("UPLOAD_FOLDER", "uploads")  # fallback default
 
     @staticmethod
     def init_app():

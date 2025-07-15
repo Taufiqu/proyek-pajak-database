@@ -5,24 +5,22 @@
 import os  
 from flask import Flask, request, jsonify  
 from flask_cors import CORS  
-from app.models import db  
-from app.faktur.services import save_invoice_data, generate_excel_export, get_history  
-from app.faktur.services.delete import delete_faktur
+from app.faktur.services import save_invoice_data_supabase, generate_excel_export_supabase, get_history_supabase  
+from app.faktur.services.delete import delete_faktur_supabase
 
 app = Flask(__name__)  
-app.config.from_object('config.Config')  # pastikan Config sudah atur DATABASE_URL ke Supabase  
+app.config.from_object('config.Config')
 
-CORS(app, origins=[  
-    "http://localhost:3000",  
-    "https://proyek-pajak.vercel.app",  
-    "https://714a4a7e8c63.ngrok-free.app"  
-], supports_credentials=True)  
-
-db.init_app(app)  
+# CORS untuk frontend
+CORS(app, origins=[
+    "http://localhost:3000",
+    "https://proyek-pajak.vercel.app",
+    "https://714a4a7e8c63.ngrok-free.app"
+], supports_credentials=True)
 
 @app.route("/")
 def index():
-    return "Hello from Database API!"
+    return "📡 Hello from Supabase Database API!"
 
 @app.route("/api/save", methods=["POST"])  
 def save_data():  
@@ -35,38 +33,33 @@ def save_data():
         if isinstance(data, list):  
             saved_count = 0  
             for item in data:  
-                save_invoice_data(item, db)  
+                save_invoice_data_supabase(item)  # tanpa db
                 saved_count += 1  
-            db.session.commit()  
             return jsonify(message=f"{saved_count} faktur berhasil disimpan."), 201  
 
         else:  
-            save_invoice_data(data, db)  
-            db.session.commit()  
+            save_invoice_data_supabase(data)
             return jsonify(message="Faktur berhasil disimpan."), 201  
 
     except ValueError as ve:  
-        db.session.rollback()  
         return jsonify(error=str(ve)), 400  
 
     except Exception as e:  
-        db.session.rollback()  
-        # Mending ganti print ke logger nanti bro  
         print(f"[❌ ERROR /api/save] {e}")  
         return jsonify(error="Terjadi kesalahan di server."), 500  
 
 @app.route("/api/export", methods=["GET"])  
 def export_excel():  
-    return generate_excel_export(db)  
+    return generate_excel_export_supabase()
 
 @app.route("/api/history", methods=["GET"])  
 def route_get_history():  
-    return get_history()  
+    return get_history_supabase()
 
 @app.route("/api/delete/<string:jenis>/<int:id>", methods=["DELETE"])  
 def route_delete_faktur(jenis, id):  
-    return delete_faktur(jenis, id)  
+    return delete_faktur_supabase(jenis, id)
 
 if __name__ == "__main__":  
     port = int(os.environ.get("PORT", 8000))  
-    app.run(host="0.0.0.0", port=port)  
+    app.run(host="0.0.0.0", port=port)
