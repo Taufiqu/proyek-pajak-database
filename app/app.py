@@ -6,7 +6,6 @@ import os
 from flask import Flask, request, jsonify  
 from flask_cors import CORS  
 from app.models import db  
-from config import Config
 from faktur.services import save_invoice_data, generate_excel_export, get_history  
 from faktur.services.delete import delete_faktur  
 
