@@ -20,6 +20,10 @@ CORS(app, origins=[
 
 db.init_app(app)  
 
+@app.route("/")
+def index():
+    return "Hello from Database API!"
+
 @app.route("/api/save", methods=["POST"])  
 def save_data():  
     if not request.is_json:  
