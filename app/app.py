@@ -6,8 +6,8 @@ import os
 from flask import Flask, request, jsonify  
 from flask_cors import CORS  
 from app.models import db  
-from faktur.services import save_invoice_data, generate_excel_export, get_history  
-from faktur.services.delete import delete_faktur  
+from app.faktur.services import save_invoice_data, generate_excel_export, get_history  
+from app.faktur.services.delete import delete_faktur
 
 app = Flask(__name__)  
 app.config.from_object('config.Config')  # pastikan Config sudah atur DATABASE_URL ke Supabase  
